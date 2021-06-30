@@ -20,6 +20,7 @@ public class Tweet {
     public String body;
     public String createdAt;
     public User user;
+    public String photoUrl;
 
     // Empty constructor needed by the Parcels library.
     public Tweet() {}
@@ -29,6 +30,13 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        try {
+            JSONArray results = jsonObject.getJSONObject("entities").getJSONArray("media");
+            tweet.photoUrl = results.getJSONObject(0).getString("media_url_https");
+        }
+        catch (NullPointerException | JSONException e) {
+            tweet.photoUrl = null;
+        }
         return tweet;
     }
 
