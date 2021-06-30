@@ -1,9 +1,8 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.activities;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
@@ -12,8 +11,12 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
+import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.adapters.TweetsAdapter;
+import com.codepath.apps.restclienttemplate.TwitterApp;
+import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
@@ -31,10 +34,8 @@ public class TimelineActivity extends AppCompatActivity {
     public static final String TAG = "TimelineActivity";
     private static int COMPOSE_REQUEST_CODE = 20;
 
-    SwipeRefreshLayout swipeContainer;
+    ActivityTimelineBinding binding;
     TwitterClient client;
-    RecyclerView rvTweets;
-    Button btLogout;
     List<Tweet> tweets;
     TweetsAdapter adapter;
     MenuItem miActionProgressItem;
@@ -42,17 +43,16 @@ public class TimelineActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_timeline);
+        binding = ActivityTimelineBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         client = TwitterApp.getRestClient(this);
-        rvTweets = findViewById(R.id.rvTweets);
         tweets = new ArrayList();
         adapter = new TweetsAdapter(this, tweets);
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
-        rvTweets.setAdapter(adapter);
-        btLogout = findViewById(R.id.btLogout);
+        binding.rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvTweets.setAdapter(adapter);
 
-        btLogout.setOnClickListener(new View.OnClickListener() {
+        binding.btLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 client.clearAccessToken();
@@ -60,11 +60,10 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
-        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeContainer.setRefreshing(true);
+                binding.swipeContainer.setRefreshing(true);
                 fetchTimelineAsync(0);
             }
         });
@@ -113,7 +112,7 @@ public class TimelineActivity extends AppCompatActivity {
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             tweets.add(0, tweet);
             adapter.notifyItemChanged(0);
-            rvTweets.smoothScrollToPosition(0);
+            binding.rvTweets.smoothScrollToPosition(0);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -126,7 +125,7 @@ public class TimelineActivity extends AppCompatActivity {
                 try {
                     tweets.addAll(Tweet.fromJsonArray(json.jsonArray));
                     adapter.notifyDataSetChanged();
-                    swipeContainer.setRefreshing(false);
+                    binding.swipeContainer.setRefreshing(false);
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                 }
