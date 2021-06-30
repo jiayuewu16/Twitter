@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
     private static int COMPOSE_REQUEST_CODE = 20;
+
+    SwipeRefreshLayout swipeContainer;
     TwitterClient client;
     RecyclerView rvTweets;
     Button btLogout;
@@ -55,7 +58,16 @@ public class TimelineActivity extends AppCompatActivity {
                 finish();
             }
         });
-        popularHomeTimeline();
+        populateHomeTimeline();
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                swipeContainer.setRefreshing(true);
+                fetchTimelineAsync(0);
+            }
+        });
     }
 
     @Override
@@ -85,7 +97,28 @@ public class TimelineActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void popularHomeTimeline() {
+    public void fetchTimelineAsync(int page) {
+        client.getHomeTimeline(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                tweets.clear();
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(json.jsonArray));
+                    adapter.notifyDataSetChanged();
+                    swipeContainer.setRefreshing(false);
+                } catch (JSONException e) {
+                    Log.e(TAG, "Json exception", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onFailure " + response, throwable);
+            }
+        });
+    }
+
+    private void populateHomeTimeline() {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
