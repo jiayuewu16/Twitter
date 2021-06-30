@@ -37,6 +37,7 @@ public class TimelineActivity extends AppCompatActivity {
     Button btLogout;
     List<Tweet> tweets;
     TweetsAdapter adapter;
+    MenuItem miActionProgressItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,6 @@ public class TimelineActivity extends AppCompatActivity {
                 finish();
             }
         });
-        populateHomeTimeline();
 
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -68,12 +68,23 @@ public class TimelineActivity extends AppCompatActivity {
                 fetchTimelineAsync(0);
             }
         });
+
+        populateHomeTimeline();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -84,6 +95,16 @@ public class TimelineActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
     }
 
     @Override
