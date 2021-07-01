@@ -27,6 +27,7 @@ public class TweetDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
 
         tweet = Parcels.unwrap(getIntent().getParcelableExtra(Tweet.class.getSimpleName()));
         binding.tvName.setText(tweet.user.name);

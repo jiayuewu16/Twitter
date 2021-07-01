@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -47,6 +48,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         super.onCreate(savedInstanceState);
         binding = ActivityTimelineBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.toolbar);
+
 
         client = TwitterApp.getRestClient(this);
         tweets = new ArrayList();
