@@ -19,20 +19,20 @@ import java.util.Locale;
 public class Tweet {
 
     public String body;
-    //public String fullBody;
     public String createdAt;
     public User user;
     public String photoUrl;
+    public long id;
 
     // Empty constructor needed by the Parcels library.
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
-        //tweet.body = jsonObject.getString("text");
         tweet.body = jsonObject.getString("full_text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
+        tweet.id = jsonObject.getLong("id");
         try {
             JSONArray results = jsonObject.getJSONObject("entities").getJSONArray("media");
             tweet.photoUrl = results.getJSONObject(0).getString("media_url_https");

@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate.activities;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
@@ -51,6 +52,17 @@ public class TimelineActivity extends AppCompatActivity {
         adapter = new TweetsAdapter(this, tweets);
         binding.rvTweets.setLayoutManager(new LinearLayoutManager(this));
         binding.rvTweets.setAdapter(adapter);
+
+        binding.rvTweets.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    loadNextDataFromApi();
+                }
+            }
+        });
 
         binding.btLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +159,29 @@ public class TimelineActivity extends AppCompatActivity {
                 try {
                     tweets.addAll(Tweet.fromJsonArray(jsonArray));
                     adapter.notifyDataSetChanged();
+                }
+                catch (JSONException e) {
+                    Log.e(TAG, "Json exception", e);
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                Log.e(TAG, "onFailure " + response, throwable);
+            }
+        });
+    }
+
+    private void loadNextDataFromApi() {
+        client.getHomeTimeline(tweets.get(tweets.size()-1).id - 1, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                Log.i(TAG, "onSuccess load " + json.toString());
+                JSONArray jsonArray = json.jsonArray;
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    adapter.notifyDataSetChanged();
+                    Log.i(TAG, "New size: " + tweets.size());
                 }
                 catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
