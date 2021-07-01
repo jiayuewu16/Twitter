@@ -11,6 +11,7 @@ import org.parceler.Parcel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +19,7 @@ import java.util.Locale;
 public class Tweet {
 
     public String body;
+    //public String fullBody;
     public String createdAt;
     public User user;
     public String photoUrl;
@@ -27,7 +29,8 @@ public class Tweet {
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
         Tweet tweet = new Tweet();
-        tweet.body = jsonObject.getString("text");
+        //tweet.body = jsonObject.getString("text");
+        tweet.body = jsonObject.getString("full_text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         try {
@@ -86,6 +89,22 @@ public class Tweet {
         }
 
         return ret;
+    }
+
+    public String getDateCreatedAt() {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+        String newDateFormat = "HH:mm MMM dd, yyyy";
+        SimpleDateFormat newsf = new SimpleDateFormat(newDateFormat, Locale.ENGLISH);
+        newsf.setLenient(true);
+        try {
+            Date oldDate = sf.parse(createdAt);
+            return newsf.format(oldDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
