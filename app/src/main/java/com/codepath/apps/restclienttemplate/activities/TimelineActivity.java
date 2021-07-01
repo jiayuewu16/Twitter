@@ -48,7 +48,8 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         super.onCreate(savedInstanceState);
         binding = ActivityTimelineBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        setSupportActionBar(binding.toolbar);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.design_default_color_background)));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
         client = TwitterApp.getRestClient(this);
