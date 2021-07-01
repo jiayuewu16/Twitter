@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvDisplayName"
             android:layout_marginStart="5dp"
+            android:autoLink="all"
             tools:text="Lorem Ipsum sample tweet!" />
 
         <TextView
