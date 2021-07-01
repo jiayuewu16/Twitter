@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
 
+import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.RequestParams;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 import com.codepath.oauth.OAuthBaseClient;
@@ -72,5 +73,10 @@ public class TwitterClient extends OAuthBaseClient {
 		params.put("status", tweetContent);
 		params.put("tweet_mode", "extended");
 		client.post(apiUrl, params, "", handler);
+	}
+
+	public void retweetTweet(long id, JsonHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/retweet/" + id + ".json");
+		client.post(apiUrl, new RequestParams(), "", handler);
 	}
 }

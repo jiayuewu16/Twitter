@@ -8,10 +8,14 @@ import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.databinding.ActivityDetailsBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.parceler.Parcels;
+
+import okhttp3.Headers;
 
 public class TweetDetailsActivity extends AppCompatActivity {
 
@@ -37,5 +41,23 @@ public class TweetDetailsActivity extends AppCompatActivity {
         else {
             binding.ivMedia.setVisibility(View.GONE);
         }
+
+        binding.ibRetweet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TwitterClient client = new TwitterClient(TweetDetailsActivity.this);
+                client.retweetTweet(tweet.id, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        Log.i("TweetsAdapter", "Retweet successful!");
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.e("TweetsAdapter", "Retweet onFailure");
+                    }
+                });
+            }
+        });
     }
 }
