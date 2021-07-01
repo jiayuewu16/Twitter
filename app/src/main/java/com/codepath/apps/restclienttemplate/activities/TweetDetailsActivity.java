@@ -49,12 +49,30 @@ public class TweetDetailsActivity extends AppCompatActivity {
                 client.retweetTweet(tweet.id, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.i("TweetsAdapter", "Retweet successful!");
+                        Log.i("TweetsDetailsActivity", "Retweet successful!");
                     }
 
                     @Override
                     public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e("TweetsAdapter", "Retweet onFailure");
+                        Log.e("TweetsDetailsActivity", "Retweet onFailure");
+                    }
+                });
+            }
+        });
+
+        binding.ibLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TwitterClient client = new TwitterClient(TweetDetailsActivity.this);
+                client.likeTweet(tweet.id, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Headers headers, JSON json) {
+                        Log.i("TweetsDetailsActivity", "Like successful!");
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                        Log.e("TweetsDetailsActivity", "Like onFailure");
                     }
                 });
             }

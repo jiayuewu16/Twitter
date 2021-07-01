@@ -91,6 +91,24 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     });
                 }
             });
+
+            binding.ibLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TwitterClient client = new TwitterClient(context);
+                    client.likeTweet(tweet.id, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.i("TweetsAdapter", "Like successful!");
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e("TweetsAdapter", "Like onFailure");
+                        }
+                    });
+                }
+            });
         }
 
         @Override
