@@ -121,7 +121,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
     @Override
     public void onFinishDialog(Tweet tweet) {
         tweets.add(0, tweet);
-        adapter.notifyItemChanged(0);
+        adapter.notifyDataSetChanged();
         binding.rvTweets.smoothScrollToPosition(0);
     }
 

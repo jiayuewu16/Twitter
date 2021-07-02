@@ -62,30 +62,32 @@ public class ComposeFragment extends DialogFragment {
                 if (tweetContent.isEmpty()) {
                     Toast.makeText(getActivity(), "Sorry, your tweet cannot be empty", Toast.LENGTH_SHORT).show();
                 }
-                if (tweetContent.length() > MAX_TWEET_LENGTH) {
+                else if (tweetContent.length() > MAX_TWEET_LENGTH) {
                     Toast.makeText(getActivity(), "Sorry, your tweet is too long", Toast.LENGTH_SHORT).show();
                 }
-                client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.i(TAG, "onSuccess to publish tweet");
-                        try {
-                            Tweet tweet = Tweet.fromJson(json.jsonObject);
-                            Log.i(TAG, "Published tweet says: " + tweet.body);
-                            ComposeListener listener = (ComposeListener) getActivity();
-                            listener.onFinishDialog(tweet);
-                            dismiss();
+                else {
+                    client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Headers headers, JSON json) {
+                            Log.i(TAG, "onSuccess to publish tweet");
+                            try {
+                                Tweet tweet = Tweet.fromJson(json.jsonObject);
+                                Log.i(TAG, "Published tweet says: " + tweet.body);
+                                ComposeListener listener = (ComposeListener) getActivity();
+                                listener.onFinishDialog(tweet);
+                                dismiss();
+                            }
+                            catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
 
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e(TAG, "onFailure to publish tweet", throwable);
-                    }
-                });
+                        @Override
+                        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                            Log.e(TAG, "onFailure to publish tweet", throwable);
+                        }
+                    });
+                }
             }
         });
         getDialog().getWindow().setSoftInputMode(
